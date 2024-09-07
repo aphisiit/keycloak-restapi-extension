@@ -4,7 +4,7 @@ Build jar
 ./gradlew build -x test
 ```
 
-Copy `build/libs/keycloak-simple-spi-1.0.0.jar` and deploy to keycloak with path `/opt/keycloak/providers/keycloak-simple-spi-1.0.0.jar`
+Copy `build/libs/keycloak-restapi-extension-1.0.0.jar` and deploy to keycloak with path `/opt/keycloak/providers/keycloak-restapi-extension-1.0.0.jar`
 
 Testing SPI Keycloak rest extension with 
 ```sh
