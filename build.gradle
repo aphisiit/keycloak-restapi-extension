@@ -9,7 +9,7 @@ repositories {
     mavenCentral()
 }
 
-sourceCompatibility = 11
+sourceCompatibility = 17
 
 dependencies {
 
