@@ -21,6 +21,7 @@ package com.aphisiit.keycloak;
  import org.keycloak.authentication.AuthenticationFlowError;
  import org.keycloak.authentication.CredentialValidator;
 import org.keycloak.authentication.authenticators.directgrant.AbstractDirectGrantAuthenticator;
+import org.keycloak.credential.CredentialModel;
 import org.keycloak.credential.CredentialProvider;
  import org.keycloak.credential.OTPCredentialProvider;
  import org.keycloak.events.Errors;
@@ -60,14 +61,30 @@ import org.keycloak.credential.CredentialProvider;
          MultivaluedMap<String, String> inputData = context.getHttpRequest().getDecodedFormParameters();
  
          String otp = inputData.getFirst("otp");
+         String deviceName = inputData.getFirst("deviceName");
  
          // KEYCLOAK-12908 Backwards compatibility. If paramter "otp" is null, then assign "totp".
          otp = (otp == null) ? inputData.getFirst("totp") : otp;
  
+         UserModel user = context.getUser();
+
+
+         String credentialId;
+
+         if(deviceName != null && deviceName != "") {
+             final CredentialModel credentialModel = user.credentialManager().getStoredCredentialByNameAndType(deviceName, OTPCredentialModel.TYPE);
+             credentialId = credentialModel.getId();
+         } else {
+            credentialId = getCredentialProvider(context.getSession())
+                .getDefaultCredential(context.getSession(), context.getRealm(), context.getUser()).getId();
+         }
+
          // Always use default OTP credential in case of direct grant authentication
-         String credentialId = getCredentialProvider(context.getSession())
-                     .getDefaultCredential(context.getSession(), context.getRealm(), context.getUser()).getId();
- 
+        //  OTPCredentialModel otpCredentialModel = getCredentialProvider(context.getSession())
+        //     .getDefaultCredential(context.getSession(), context.getRealm(), context.getUser());
+
+        //  String credentialId = otpCredentialModel.getId();
+
          if (otp == null) {
              if (context.getUser() != null) {
                  context.getEvent().user(context.getUser());
